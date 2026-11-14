@@ -17,3 +17,6 @@ assert.equal(selectTasks(tasks,'2026-11-08','day','B').length,1);
 const merged=mergeChecklist('Keep\nNew',[{id:'old',title:'Keep',done:true}]);assert.equal(merged[0].done,true);assert.equal(merged[0].id,'old');assert.equal(merged[1].done,false);
 assert(!diaryHTML({tasks:[]},'2026-11-08').includes('Иван'));
 console.log('Planner: filters, remaining duration, checklist preservation passed');
+assert.deepEqual(new Set(selectTasks(tasks,'2026-11-14','history').map(t=>t.id)),new Set(['1','2','3','4']));
+assert.deepEqual(selectTasks(tasks,'2026-11-14','history','A').map(t=>t.id),['1']);
+assert.ok(diaryHTML({tasks:[],dayLines:{'2026-11-08':'<img src=x>'}},'2026-11-08').includes('«&lt;img src=x&gt;»'));
