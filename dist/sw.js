@@ -1,6 +1,6 @@
-const CACHE='apeiron-v13';
-const CORE=['./index.html','./style.css?v=13','./app.mjs?v=13','./diary.mjs?v=13','./migrations.mjs?v=13','./seed.mjs?v=13','./icon.svg?v=13','./icon-192.png?v=13','./icon-512.png?v=13','./manifest.webmanifest?v=13'];
-const OPTIONAL=['./routes.mjs?v=13','./research.mjs?v=13'];
+const CACHE='apeiron-v14';
+const CORE=['./index.html','./style.css?v=14','./app.mjs?v=14','./diary.mjs?v=14','./migrations.mjs?v=14','./history.mjs?v=14','./seed.mjs?v=14','./icon.svg?v=14','./icon-192.png?v=14','./icon-512.png?v=14','./manifest.webmanifest?v=14'];
+const OPTIONAL=['./routes.mjs?v=14','./research.mjs?v=14'];
 const URLS=new Set([...CORE,...OPTIONAL].map(p=>new URL(p,self.registration.scope).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE))));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{await self.clients.claim();const cache=await caches.open(CACHE);await Promise.allSettled(OPTIONAL.map(p=>cache.add(p)));})()));

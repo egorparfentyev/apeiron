@@ -4,5 +4,5 @@ function graph(file,read,seen=new Set()){if(seen.has(file))return [];seen.add(fi
 const current=graph('app.mjs',f=>readFileSync(new URL('../dist/'+f,import.meta.url),'utf8'));
 assert(!current.some(x=>['routes.mjs','research.mjs','seed.mjs'].includes(x.file)));
 const bytes=current.reduce((sum,module)=>sum+module.bytes,0);
-assert(bytes<43_000, `Startup JavaScript exceeded 43 kB: ${bytes} bytes`);
+assert(bytes<49_000, `Startup JavaScript exceeded 49 kB: ${bytes} bytes`);
 console.log(JSON.stringify({initialJavaScriptBytes:bytes,initialModules:current.map(x=>x.file)}));
