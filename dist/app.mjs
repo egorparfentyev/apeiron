@@ -1,7 +1,7 @@
-import {migrateGoals} from './migrations.mjs?v=11';
-import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=11';
+import {migrateGoals} from './migrations.mjs?v=12';
+import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=12';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=11').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=12').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const key='vector.web.v1', $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const isHistory = value => value?.version===1 && ['goals','tasks','habits','logs','events','reflections'].every(name=>Array.isArray(value[name]));
 let state,seed,locked=false;
@@ -13,7 +13,7 @@ try {
     state = parsed;
   }
 } catch {locked=true}
-if(!state){seed=(await import('./seed.mjs?v=11')).seed;state=structuredClone(seed)}let page='Сегодня',date=day(),horizon='Полгода';
+if(!state){seed=(await import('./seed.mjs?v=12')).seed;state=structuredClone(seed)}let page='Сегодня',date=day(),horizon='Полгода';
 if(!locked&&migrateGoals(state)){try{localStorage.setItem(key,JSON.stringify(state))}catch{locked=true}}
 let routeTrack='startup',routeIndex=0;const nextMonday=new Date();nextMonday.setDate(nextMonday.getDate()+((8-nextMonday.getDay())%7));let routeStart=day(nextMonday);
 const pages=['Сегодня','Цели','Помощник','Календарь','Прогресс','Настройки'];
@@ -62,7 +62,7 @@ if(page==='Настройки')content=`<div class="heading"><div><h1>Настр
 
 if(page==='Помощник'){if(routeModule)content=routeModule.routeHTML(state,routeTrack,routeIndex,routeStart);else{content=routeError?'<section class="card"><h2>Раздел недоступен</h2><p>При первом открытии маршрутов нужен интернет.</p><button id="retry-routes" class="primary">Повторить</button></section>':'<section class="card" role="status">Загрузка маршрутов…</section>';if(!routeError)loadRoutes()}}
 
-$('#app').innerHTML=`<div class="shell"><aside class="sidebar"><a class="brand" href="#"><img src="./icon.svg?v=11" alt="">Апейрон</a><nav>${pages.map(p=>`<button class="navbtn ${page===p?'active':''}" data-page="${p}">${p==='Сегодня'?'Ежедневник':p==='Помощник'?'Маршруты':p}</button>`).join('')}</nav><div class="side-note">МФТИ · 3-й курс<strong>Исследования<br>и проекты</strong>GaAs · GPE · ML</div></aside><main class="workspace"><header class="topbar"><span class="breadcrumb">APEIRON / ${page==='Сегодня'?'Ежедневник':page==='Помощник'?'Маршруты':page}</span><a class="brand only-mobile" href="#"><img src="./icon.svg?v=11" alt="">Апейрон</a><div class="top-actions"><span class="small muted">${new Date().toLocaleDateString('ru',{day:'numeric',month:'long'})}</span></div></header>${locked?'<p class="notice warning">Ошибка чтения истории. Восстановите резервную копию в настройках.</p>':''}${content}</main></div><nav class="mobile-nav" aria-label="Разделы">${pages.map((p,i)=>`<button data-page="${p}" ${page===p?'aria-current="page"':''} class="${page===p?'active':''}" aria-label="${['Ежедневник','Цели','Маршруты','Календарь','Прогресс','Настройки'][i]}">${['Дела','Цели','Планы','Даты','Итоги','Ещё'][i]}</button>`).join('')}</nav>`;
+$('#app').innerHTML=`<div class="shell"><aside class="sidebar"><a class="brand" href="#"><img src="./icon.svg?v=12" alt="">Апейрон</a><nav>${pages.map(p=>`<button class="navbtn ${page===p?'active':''}" data-page="${p}">${p==='Сегодня'?'Ежедневник':p==='Помощник'?'Маршруты':p}</button>`).join('')}</nav><div class="side-note">МФТИ · 3-й курс<strong>Исследования<br>и проекты</strong>GaAs · GPE · ML</div></aside><main class="workspace"><header class="topbar"><span class="breadcrumb">APEIRON / ${page==='Сегодня'?'Ежедневник':page==='Помощник'?'Маршруты':page}</span><a class="brand only-mobile" href="#"><img src="./icon.svg?v=12" alt="">Апейрон</a><div class="top-actions"><span class="small muted">${new Date().toLocaleDateString('ru',{day:'numeric',month:'long'})}</span></div></header>${locked?'<p class="notice warning">Ошибка чтения истории. Восстановите резервную копию в настройках.</p>':''}${content}</main></div><nav class="mobile-nav" aria-label="Разделы">${pages.map((p,i)=>`<button data-page="${p}" ${page===p?'aria-current="page"':''} class="${page===p?'active':''}" aria-label="${['Ежедневник','Цели','Маршруты','Календарь','Прогресс','Настройки'][i]}">${['Дела','Цели','Планы','Даты','Итоги','Ещё'][i]}</button>`).join('')}</nav>`;
 
 if($('#open-coach'))$('#open-coach').onclick=()=>{page='Помощник';render();scrollTo(0,0)};
 if($('#retry-routes'))$('#retry-routes').onclick=()=>{loadRoutes();render()};
