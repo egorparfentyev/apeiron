@@ -1,0 +1,43 @@
+// !$*UTF8*$!
+{
+archiveVersion = 1;
+classes = {};
+objectVersion = 56;
+objects = {
+BF02B043F1713924EB7595D0 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+FBFB7466BFE9AD0DD750F69A = {isa = PBXBuildFile; fileRef = BF02B043F1713924EB7595D0; };
+561D63B0FA4196679EB7B5AA = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
+327D94EAC74E1D0DB32BBE12 = {isa = PBXBuildFile; fileRef = 561D63B0FA4196679EB7B5AA; };
+867C22077BE592830E1A172F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Design.swift; sourceTree = "<group>"; };
+182EA626E1D63B975B4BF427 = {isa = PBXBuildFile; fileRef = 867C22077BE592830E1A172F; };
+C6218B430ED9B34C6272B197 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
+A8E3BF415E614AD37AE090B6 = {isa = PBXBuildFile; fileRef = C6218B430ED9B34C6272B197; };
+E4BE11D90C54E21909298559 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+433CCD3B174ECA09EC1E446F = {isa = PBXBuildFile; fileRef = E4BE11D90C54E21909298559; };
+C322CE95F937E7FD41BC82F6 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Seed.swift; sourceTree = "<group>"; };
+BA1D3CC65919BB1CBDEB7052 = {isa = PBXBuildFile; fileRef = C322CE95F937E7FD41BC82F6; };
+A2FA5F4F5D336DC8ECDF4BC3 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+289C8D3C22097DA2A314830F = {isa = PBXBuildFile; fileRef = A2FA5F4F5D336DC8ECDF4BC3; };
+A6D1EABD8211EBDFB4F8CBEC = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+614B4B7697321E24EDE03C80 = {isa = PBXBuildFile; fileRef = A6D1EABD8211EBDFB4F8CBEC; };
+FD9568E2DAEE85EE30DCEF31 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+9AEF914CF4D78D1DFCAF1B9F = {isa = PBXBuildFile; fileRef = FD9568E2DAEE85EE30DCEF31; };
+683AA1DB3221F2CE462B8E1D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorApp.swift; sourceTree = "<group>"; };
+3405B76DBF6EA67639E8A73B = {isa = PBXBuildFile; fileRef = 683AA1DB3221F2CE462B8E1D; };
+38A007151ABE87CC01A5B6E9 = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Vector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+B28B7AF69320201D1CF206EB = {isa = PBXGroup; children = (BCE16DD0260827ECF338C787, FBDC4F23F93125BBEEAE800C); sourceTree = "<group>"; };
+BCE16DD0260827ECF338C787 = {isa = PBXGroup; children = (BF02B043F1713924EB7595D0, 561D63B0FA4196679EB7B5AA, 867C22077BE592830E1A172F, C6218B430ED9B34C6272B197, E4BE11D90C54E21909298559, C322CE95F937E7FD41BC82F6, A2FA5F4F5D336DC8ECDF4BC3, A6D1EABD8211EBDFB4F8CBEC, FD9568E2DAEE85EE30DCEF31, 683AA1DB3221F2CE462B8E1D); path = Vector; sourceTree = "<group>"; };
+FBDC4F23F93125BBEEAE800C = {isa = PBXGroup; children = (38A007151ABE87CC01A5B6E9); name = Products; sourceTree = "<group>"; };
+FE77C82BB2A42EFEEC930360 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (FBFB7466BFE9AD0DD750F69A, 327D94EAC74E1D0DB32BBE12, 182EA626E1D63B975B4BF427, A8E3BF415E614AD37AE090B6, 433CCD3B174ECA09EC1E446F, BA1D3CC65919BB1CBDEB7052, 289C8D3C22097DA2A314830F, 614B4B7697321E24EDE03C80, 9AEF914CF4D78D1DFCAF1B9F, 3405B76DBF6EA67639E8A73B); runOnlyForDeploymentPostprocessing = 0; };
+7561BFB015D8F536760CB671 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+0E8A3AD980EC179856012B7E = {isa = PBXNativeTarget; buildConfigurationList = C57128001CE614BF8549D6BB; buildPhases = (FE77C82BB2A42EFEEC930360, 7561BFB015D8F536760CB671); buildRules = (); dependencies = (); name = Vector; productName = Vector; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application"; };
+98F54143AB4E86B28C3AFEE0 = {isa = PBXProject; attributes = {LastSwiftUpdateCheck = 2600; LastUpgradeCheck = 2600; }; buildConfigurationList = 862894B703A6DEDF96A9DD6C; compatibilityVersion = "Xcode 14.0"; developmentRegion = ru; hasScannedForEncodings = 0; knownRegions = (ru, en, Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E); };
+89E1FD6268CC0F221A2BE178 = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 26.0; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; }; name = Debug; };
+E6DE6C99132752C914FEF632 = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 26.0; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-O"; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; name = Release; };
+862894B703A6DEDF96A9DD6C = {isa = XCConfigurationList; buildConfigurations = (89E1FD6268CC0F221A2BE178, E6DE6C99132752C914FEF632); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+7082CC0B6FC1282FCEABD07A = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 26.0; SWIFT_VERSION = 5.0; PRODUCT_BUNDLE_IDENTIFIER = com.personal.vector; PRODUCT_NAME = "$(TARGET_NAME)"; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "Вектор"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Добавление выбранного вами события в календарь."; INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait; TARGETED_DEVICE_FAMILY = 1; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; CODE_SIGN_STYLE = Automatic; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; }; name = Debug; };
+639A7CA24D39909E713B47F7 = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 26.0; SWIFT_VERSION = 5.0; PRODUCT_BUNDLE_IDENTIFIER = com.personal.vector; PRODUCT_NAME = "$(TARGET_NAME)"; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "Вектор"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Добавление выбранного вами события в календарь."; INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait; TARGETED_DEVICE_FAMILY = 1; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; CODE_SIGN_STYLE = Automatic; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-O"; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; name = Release; };
+C57128001CE614BF8549D6BB = {isa = XCConfigurationList; buildConfigurations = (7082CC0B6FC1282FCEABD07A, 639A7CA24D39909E713B47F7); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+};
+rootObject = 98F54143AB4E86B28C3AFEE0;
+}

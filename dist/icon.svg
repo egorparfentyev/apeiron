@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="field" cx=".38" cy=".25" r=".78">
+      <stop stop-color="#263e79"/>
+      <stop offset=".58" stop-color="#111d3c"/>
+      <stop offset="1" stop-color="#080f21"/>
+    </radialGradient>
+    <linearGradient id="prism" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#6286ff"/>
+      <stop offset=".52" stop-color="#a4ceff"/>
+      <stop offset="1" stop-color="#ddfff5"/>
+    </linearGradient>
+    <linearGradient id="orbit">
+      <stop stop-color="#748cff" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#b3ffe8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#field)"/>
+  <circle cx="256" cy="256" r="172" fill="none" stroke="#a8bafe" stroke-opacity=".15" stroke-width="2"/>
+  <circle cx="256" cy="256" r="134" fill="none" stroke="#a8bafe" stroke-opacity=".11" stroke-width="2"/>
+  <path d="M256 125 379 361h-51l-72-141-72 141h-51z" fill="url(#prism)"/>
+  <path d="m256 125 123 236h-51l-72-141z" fill="#111742" opacity=".16"/>
+  <path d="M110 322c-8-23 49-68 130-102s154-43 163-20c10 25-51 71-133 106s-151 42-160 16z" fill="none" stroke="#7d9bf5" stroke-opacity=".35" stroke-width="6"/>
+  <path d="M110 322c9 26 78 19 160-16s143-81 133-106" fill="none" stroke="url(#orbit)" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="349" cy="263" r="15" fill="#aaffdf" opacity=".24"/>
+  <circle cx="349" cy="263" r="8" fill="#d5fff3"/>
+</svg>

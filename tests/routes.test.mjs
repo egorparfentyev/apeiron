@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';
+import {seed} from '../dist/seed.mjs';
+import {startup,englishWeek,scheduledTasks,addSchedule,migrateGoals,routeHTML} from '../dist/routes.mjs';
+const state=structuredClone(seed);state.tasks.push({id:'existing',title:'Моя работа',day:'2026-11-08',mark:'Сделано'});
+const original=structuredClone(state.goals);assert.equal(migrateGoals(state),true);assert.equal(migrateGoals(state),false);assert.equal(state.tasks[0].title,'Моя работа');assert.equal(state.archivedGoals.length,4);assert.deepEqual(state.archivedGoals.find(g=>g.title==='Первый результат в фотонике'),original.find(g=>g.title==='Первый результат в фотонике'));assert.equal(state.goals.filter(g=>g.route).length,3);
+for(let i=0;i<8;i++) {const week=englishWeek(i);assert.equal(week.tasks.reduce((s,t)=>s+t.minutes,0),285);const tasks=scheduledTasks('english',i,'2026-12-28',week.tasks);assert.equal(tasks[5].day,'2027-01-02');assert(tasks.every(t=>t.note&&t.goalID==='route-english'));}
+const plan=scheduledTasks('startup',0,'2026-11-09',startup[0].tasks);assert.deepEqual(plan.map(t=>t.day),['2026-11-09','2026-11-11','2026-11-13']);assert.equal(addSchedule(state,plan,()=>String(state.tasks.length)),3);state.tasks[1].day='2026-11-20';state.tasks[1].title='Изменённое дело';state.tasks[1].mark='Сделано';assert.equal(addSchedule(state,plan,()=>''),0);assert.equal(addSchedule(state,scheduledTasks('startup',1,'2026-11-16',startup[1].tasks),()=>String(state.tasks.length)),3);
+state.routeProgress={'startup-0':{evidence:'<script>bad</script>',done:true}};assert(routeHTML(state,'startup',0,'2026-11-09').includes('&lt;script&gt;bad'));assert.equal(scheduledTasks('startup',0,'',startup[0].tasks).length,0);
+console.log('Routes: migration/history, week dates, workload, persistence data, cross-date deduplication, safe evidence passed');
