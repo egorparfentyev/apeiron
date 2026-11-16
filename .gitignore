@@ -4,3 +4,6 @@ DerivedData/
 .env
 .env.*
 *.xcuserstate
+
+.firebase/
+firebase-debug.log*
