@@ -10,12 +10,12 @@ async function request(url,mode='cors'){let response;listeners.fetch({request:{m
 assert.equal(await request('https://example.test/','navigate'),'network');
 offline=true;
 assert((await request('https://example.test/','navigate')).includes('index.html'));
-assert((await request('https://example.test/app.mjs?v=14')).includes('app.mjs'));
-assert((await request('https://example.test/routes.mjs?v=14')).includes('optional'));
+assert((await request('https://example.test/app.mjs?v=17')).includes('app.mjs'));
+assert((await request('https://example.test/routes.mjs?v=17')).includes('optional'));
 assert.equal(network,2);
 offline=false;
 assert.equal(await request('https://example.test/unrelated.json'),null);
-assert.equal(await request('https://other.test/app.mjs?v=14'),null);
+assert.equal(await request('https://other.test/app.mjs?v=17'),null);
 items.delete('https://example.test/diary.mjs?v=14');
 assert.equal(await request('https://example.test/diary.mjs?v=14'),'network');
 assert.equal(network,3);

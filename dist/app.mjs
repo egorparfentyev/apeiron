@@ -1,8 +1,8 @@
-import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=14';
-import {migrateGoals} from './migrations.mjs?v=14';
+import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=17';
+import {migrateGoals, addQuantumOlympiadPlan} from './migrations.mjs?v=17';
 import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=14';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=14').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=17').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let state, primary, locked = false;
 try {
@@ -19,10 +19,13 @@ else {
   const {seed} = await import('./seed.mjs?v=14');
   state = structuredClone(seed);
 }
-const migrated = migrateGoals(state);
+const migratedGoals = migrateGoals(state);
+const addedPlan = !locked && addQuantumOlympiadPlan(state, day());
+const migrated = migratedGoals || addedPlan;
+if (addedPlan) state.savedAt = Math.max(Date.now(), (state.savedAt || 0) + 1);
 let savedState = structuredClone(state);
 let backupStatus = '';
-if (hasSavedHistory) {
+if (hasSavedHistory || addedPlan) {
   if (state !== primary || migrated) {
     try { localStorage.setItem(key, JSON.stringify(state)); } catch {}
   }
@@ -171,6 +174,7 @@ if($('#export')){
       const wasLocked=locked;
       state=wasLocked?backup:mergeHistory(state,backup);
       locked=false;
+      addQuantumOlympiadPlan(state, day());
       if(save())feedback('Данные из копии добавлены');
       else if(wasLocked){locked=true;render()}
     }catch{alert('Файл не подходит. Текущие данные сохранены.')}

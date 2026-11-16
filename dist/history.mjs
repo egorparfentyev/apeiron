@@ -15,6 +15,7 @@ export function newestHistory(primary, backup) {
 
 export function mergeHistory(current, backup) {
   const result = {...current};
+  if (backup.quantumOlympiadPlan) result.quantumOlympiadPlan = true;
   for (const key of [...arrays, 'archivedGoals']) {
     const identify = item => item.id || JSON.stringify([item.habitID, item.day]);
     const entries = new Map((result[key] || []).map(item => [identify(item), item]));

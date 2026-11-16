@@ -7,3 +7,10 @@ for(let i=0;i<8;i++) {const week=englishWeek(i);assert.equal(week.tasks.reduce((
 const plan=scheduledTasks('startup',0,'2026-11-09',startup[0].tasks);assert.deepEqual(plan.map(t=>t.day),['2026-11-09','2026-11-11','2026-11-13']);assert.equal(addSchedule(state,plan,()=>String(state.tasks.length)),3);state.tasks[1].day='2026-11-20';state.tasks[1].title='Изменённое дело';state.tasks[1].mark='Сделано';assert.equal(addSchedule(state,plan,()=>''),0);assert.equal(addSchedule(state,scheduledTasks('startup',1,'2026-11-16',startup[1].tasks),()=>String(state.tasks.length)),3);
 state.routeProgress={'startup-0':{evidence:'<script>bad</script>',done:true}};assert(routeHTML(state,'startup',0,'2026-11-09').includes('&lt;script&gt;bad'));assert.equal(scheduledTasks('startup',0,'',startup[0].tasks).length,0);
 console.log('Routes: migration/history, week dates, workload, persistence data, cross-date deduplication, safe evidence passed');
+const {addQuantumOlympiadPlan}=await import('../dist/migrations.mjs');
+const planState={tasks:[{id:'personal',mark:'Сделано'}]};
+assert.equal(addQuantumOlympiadPlan(planState,'2026-11-16'),true);
+assert.equal(planState.tasks.length,9);
+assert.equal(planState.tasks[0].mark,'Сделано');
+assert.equal(addQuantumOlympiadPlan(planState,'2026-11-17'),false);
+assert.equal(addQuantumOlympiadPlan({tasks:[]},'2026-11-30'),false);
