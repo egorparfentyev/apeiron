@@ -2,7 +2,7 @@ import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, w
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
 import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=14';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=18').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=19').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let state, primary, locked = false;
 try {
@@ -32,7 +32,7 @@ if (hasSavedHistory || addedPlan || linkedGoal) {
   }
   syncBackup(savedState);
 }
-let page='Сегодня',date=day(),horizon='Полгода';
+let page=['#english2027','#quantum'].includes(location.hash)?'Помощник':'Сегодня',date=day(),horizon='Полгода';
 function showBackupStatus() {
   const label = $('#backup-status');
   if (label) label.textContent = backupStatus;
@@ -48,7 +48,7 @@ function syncBackup(snapshot) {
     showBackupStatus();
   });
 }
-let routeTrack='startup',routeIndex=0;const nextMonday=new Date();nextMonday.setDate(nextMonday.getDate()+((8-nextMonday.getDay())%7));let routeStart=day(nextMonday);
+let routeTrack=location.hash==='#quantum'?'quantum':location.hash==='#english2027'?'english2027':'startup',routeIndex=0;const nextMonday=new Date();nextMonday.setDate(nextMonday.getDate()+((8-nextMonday.getDay())%7));let routeStart=day(nextMonday);
 const pages=['Сегодня','Цели','Помощник','Календарь','Прогресс','Настройки'];
 
 
