@@ -1,5 +1,5 @@
-const CACHE='apeiron-v14';
-const CORE=['./index.html','./style.css?v=14','./app.mjs?v=14','./diary.mjs?v=14','./migrations.mjs?v=14','./history.mjs?v=14','./seed.mjs?v=14','./icon.svg?v=14','./icon-192.png?v=14','./icon-512.png?v=14','./manifest.webmanifest?v=14'];
+const CACHE='apeiron-v15';
+const CORE=['./index.html','./style.css?v=14','./app.mjs?v=14','./diary.mjs?v=14','./migrations.mjs?v=14','./history.mjs?v=14','./seed.mjs?v=14','./icon.svg?v=14','./icon-192.png?v=14','./icon-512.png?v=14','./manifest.webmanifest?v=15'];
 const OPTIONAL=['./routes.mjs?v=14','./research.mjs?v=14'];
 const URLS=new Set([...CORE,...OPTIONAL].map(p=>new URL(p,self.registration.scope).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE))));
