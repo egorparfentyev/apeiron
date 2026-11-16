@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {addSchedule, englishPlanSchedule, routeHTML} from '../dist/routes.mjs';
+
+const tasks=englishPlanSchedule();
+assert.equal(tasks[0].day,'2026-11-16');
+assert.equal(tasks.at(-1).day,'2027-05-31');
+assert.equal(new Set(tasks.map(task=>task.routeKey.split('-')[1])).size,29);
+assert(tasks.some(task=>task.day==='2026-11-29'&&task.title.includes('диагностику')));
+assert(tasks.some(task=>task.day==='2027-03-31'&&task.title.includes('переходе')));
+assert(tasks.every(task=>task.goalID==='route-english'&&task.note&&task.minutes>0));
+const state={tasks:[]};
+let id=0;
+assert.equal(addSchedule(state,tasks.slice(0,2),()=>++id),2);
+assert.equal(addSchedule(state,tasks,()=>++id),tasks.length-2);
+assert.equal(addSchedule(state,tasks,()=>++id),0);
+const html=routeHTML(state,'english2027',0,'2026-11-30');
+assert.match(html,/2026-11-16/);
+assert.match(html,/Уже в ежедневнике/);
+assert.match(html,/Добавить весь план/);
+console.log(`English plan: ${tasks.length} dated tasks, all 29 periods, milestones, and duplicate protection.`);
