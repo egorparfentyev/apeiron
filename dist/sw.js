@@ -1,6 +1,6 @@
-const CACHE='apeiron-v20';
-const CORE=['./index.html','./style.css?v=20','./app.mjs?v=20','./diary.mjs?v=20','./migrations.mjs?v=18','./history.mjs?v=18','./seed.mjs?v=14','./icon.svg?v=14','./apple-touch-icon.png','./icon-192.png?v=14','./icon-512.png?v=14','./manifest.webmanifest?v=20'];
-const OPTIONAL=['./routes.mjs?v=20','./english-plan.mjs','./research.mjs?v=14'];
+const CACHE='apeiron-v21';
+const CORE=['./phrases.mjs?v=21','./index.html','./style.css?v=21','./app.mjs?v=21','./diary.mjs?v=21','./migrations.mjs?v=18','./history.mjs?v=18','./seed.mjs?v=14','./icon.svg?v=14','./apple-touch-icon.png','./icon-192.png?v=14','./icon-512.png?v=14','./manifest.webmanifest?v=20'];
+const OPTIONAL=['./routes.mjs?v=21','./english-plan.mjs','./research.mjs?v=14'];
 const URLS=new Set([...CORE,...OPTIONAL].map(p=>new URL(p,self.registration.scope).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE))));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{await self.clients.claim();const cache=await caches.open(CACHE);await Promise.allSettled(OPTIONAL.map(p=>cache.add(p)));})()));

@@ -1,8 +1,8 @@
 import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=18';
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
-import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=20';
+import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=21';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=20').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=21').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let state, primary, locked = false;
 try {
@@ -73,6 +73,14 @@ function modal(title,body,submit){$('#editor').innerHTML=`<div class="dialog-hea
 const field=(name,label,value='',type='text')=>`<label>${label}<input required name="${name}" type="${type}" value="${esc(value)}"></label>`;
 function feedback(text){const el=$('#toast');el.textContent=text;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2600)}
 function render(){let content='';
+if(page==='Сегодня' && !state.dayLines?.[date]){
+  const selectedDate=date;
+  import('./phrases.mjs?v=21').then(({dailyPhrase})=>{
+    const quote=document.getElementById('daily-phrase');
+    if(quote?.dataset.date===selectedDate && !state.dayLines?.[selectedDate])
+      quote.textContent='«'+dailyPhrase(selectedDate)+'»';
+  }).catch(()=>{});
+}
 if(page==='Сегодня')content=diaryHTML(state,date)+`<details class="diary-extra"><summary>Привычки и заметка дня</summary><div class="grid"><section class="card"><h2>Вечерняя заметка</h2><textarea id="journal" rows="4" placeholder="Заметка дня">${esc(state.reflections.find(r=>r.day===date)?.text||'')}</textarea><button class="text-btn" id="save-note">Сохранить заметку</button></section><section class="card"><div class="card-head"><h2>Ритм привычек</h2><button id="habit-add">+</button></div>${state.habits.filter(h=>!h.archived&&h.weekdays.includes(new Date(date+'T12:00').getDay()+1)).map(h=>{let mark=state.logs.find(l=>l.habitID===h.id&&l.day===date)?.mark;return `<div class="habit-row"><h3>${esc(h.title)}</h3><p>${esc(h.minimum)}</p><div class="status-row">${['Сделано','Не сделал','Отдых'].map(m=>`<button class="status-btn ${mark===m?'selected':''}" data-habit="${h.id}" data-mark="${m}" ${date>day()?'disabled':''}>${m}</button>`).join('')}</div></div>`}).join('')||'<p class="muted small">Сегодня свободный день.</p>'}</section></div></details>`;
 if(page==='Цели')content=`<div class="heading"><div><h1>Ваши цели</h1><p>Редактируйте формулировки и этапы под свою работу</p></div><button id="new-goal" class="primary">＋ Цель</button></div><div class="tabs">${['Полгода','Год','5–10 лет'].map(h=>`<button data-horizon="${h}" class="${h===horizon?'active':''}">${h}</button>`).join('')}</div><div class="grid">${state.goals.filter(g=>g.horizon===horizon).map(g=>`<div class="card goal-card"><span class="badge">${esc(g.area)}</span><h3>${esc(g.title)}</h3><p>${esc(g.why)}</p><div class="goal-steps">${g.milestones.map(m=>`<label class="step"><input type="checkbox" data-goal="${g.id}" data-step="${m.id}" ${m.done?'checked':''}>${esc(m.title)}</label>`).join('')}</div><button class="primary" data-plan-goal="${g.id}">${g.route?'Открыть маршрут →':'Запланировать этап →'}</button><button class="text-btn" data-goaledit="${g.id}">Изменить цель</button></div>`).join('')}</div>`;
 if(page==='Цели'){content+=`<section class="card" style="margin-top:24px"><h2>Текущая работа в лаборатории</h2><p>Вы уже работаете в лаборатории. Поиск другой лаборатории убран. В маршруте «GaAs · GPE» — открытая GPE, ловушки, пороговые графики и различение режимов генерации. Параметры образца и тип накачки уточняются с руководителем.</p></section>${state.archivedGoals?.length?`<details class="card" style="margin-top:20px"><summary>Прежние шаблоны и их история (${state.archivedGoals.length})</summary><p>Сохранены для справки. Ваши дела и отметки не удалены.</p>${state.archivedGoals.map(g=>`<h3>${esc(g.title)}</h3><ul>${g.milestones.map(m=>`<li>${m.done?'✓ ':''}${esc(m.title)}</li>`).join('')}</ul>`).join('')}</details>`:''}`;}

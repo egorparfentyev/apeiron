@@ -106,3 +106,18 @@
   .agenda-panel { padding: 14px 12px; }
   .mobile-nav { border-top-color: #354044; }
 }
+
+/* Keep the tap target generous around the compact completion mark. */
+.agenda-task .task-toggle {
+  width:44px; height:44px; flex:0 0 44px; display:grid; place-items:center;
+  background:transparent; border:0; padding:0; font-size:0;
+}
+.agenda-task .task-toggle::before {
+  content:""; width:18px; height:18px; border:1.5px solid #829a96;
+  border-radius:50%; grid-area:1/1;
+}
+.agenda-task .task-toggle.is-checked::before { background:#91dbc4; border-color:#91dbc4; }
+.agenda-task .task-toggle.is-checked::after {
+  content:""; grid-area:1/1; width:5px; height:9px; border:solid #123c32;
+  border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg);
+}
