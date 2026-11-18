@@ -1,8 +1,8 @@
 import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=18';
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
-import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=22';
+import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=23';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=22').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=23').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let state, primary, locked = false;
 try {
@@ -72,6 +72,7 @@ function save(){
 function modal(title,body,submit){$('#editor').innerHTML=`<div class="dialog-head"><h2>${title}</h2><button id="close">✕</button></div><form class="dialog-body">${body}<button class="primary">Сохранить</button></form>`;$('#close').onclick=()=>$('#editor').close();$('#editor form').onsubmit=e=>{e.preventDefault();submit(new FormData(e.target));$('#editor').close();save()};$('#editor').showModal()}
 const field=(name,label,value='',type='text')=>`<label>${label}<input required name="${name}" type="${type}" value="${esc(value)}"></label>`;
 function feedback(text){const el=$('#toast');el.textContent=text;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2600)}
+let progressModule;
 function render(){let content='';
 if(page==='Сегодня' && !state.dayLines?.[date]){
   const selectedDate=date;
@@ -86,33 +87,14 @@ if(page==='Цели')content=`<div class="heading"><div><h1>Ваши цели</h
 if(page==='Цели'){content+=`<section class="card" style="margin-top:24px"><h2>Текущая работа в лаборатории</h2><p>Вы уже работаете в лаборатории. Поиск другой лаборатории убран. В маршруте «GaAs · GPE» — открытая GPE, ловушки, пороговые графики и различение режимов генерации. Параметры образца и тип накачки уточняются с руководителем.</p></section>${state.archivedGoals?.length?`<details class="card" style="margin-top:20px"><summary>Прежние шаблоны и их история (${state.archivedGoals.length})</summary><p>Сохранены для справки. Ваши дела и отметки не удалены.</p>${state.archivedGoals.map(g=>`<h3>${esc(g.title)}</h3><ul>${g.milestones.map(m=>`<li>${m.done?'✓ ':''}${esc(m.title)}</li>`).join('')}</ul>`).join('')}</details>`:''}`;}
 if(page==='Календарь')content=`<div class="heading"><div><h1>События и программы</h1><p>Фотоника, исследования и новые знакомства</p></div></div><p class="notice">Источники проверены 28.10.2026. Перед подачей проверьте актуальные условия. Программы без даты не имеют подтверждённого нового набора.</p><div class="grid events-grid">${state.events.map(e=>`<article class="card event-card"><span class="badge">${esc(e.kind)}</span><h3 style="margin:16px 0">${esc(e.title)}</h3><p class="small">${esc(e.timing)}</p><p class="small muted" style="margin:12px 0">${esc(e.eligibility)}</p><a href="${esc(e.url)}" target="_blank" rel="noopener">Официальный источник ↗</a></article>`).join('')}</div>`;
 if(page==='Прогресс'){
-  const tracked = state.goals.filter(goal=>state.progressGoalIDs?.includes(goal.id));
-  content=`<div class="heading"><h1>Прогресс</h1><button id="track-goal" class="primary">＋ Цель</button></div>
-  <div class="stats">
-  <div class="card stat"><span class="eyebrow">Дела</span><strong>${state.tasks.filter(task=>task.mark==='Сделано').length}</strong><p>выполнено</p></div>
-  <div class="card stat"><span class="eyebrow">Этапы</span><strong>${state.goals.flatMap(goal=>goal.milestones).filter(step=>step.done).length}</strong><p>достигнуто</p></div>
-  <div class="card stat"><span class="eyebrow">Привычки</span><strong>${state.logs.filter(log=>log.mark==='Сделано').length}</strong><p>повторений</p></div>
-  </div>
-  <section class="progress-goals" aria-label="Отслеживаемые цели">${tracked.map(goal=>{
-    const completed = goal.milestones.filter(step=>step.done).length;
-    const total = goal.milestones.length;
-    const tasksDone = state.tasks.filter(task=>task.goalID===goal.id&&task.mark==='Сделано').length;
-    return `<article class="card tracked-goal">
-      <div class="card-head"><h2>${esc(goal.title)}</h2><button class="text-btn" data-untrack="${esc(goal.id)}">Скрыть</button></div>
-      <p class="small muted">${completed} из ${total} этапов · ${tasksDone} связанных дел выполнено</p>
-      ${total?`<progress value="${completed}" max="${total}" aria-label="Выполненные этапы"></progress>`:''}
-      <div class="goal-steps">${goal.milestones.map(step=>`<label class="step"><input type="checkbox" data-goal="${esc(goal.id)}" data-step="${esc(step.id)}" ${step.done?'checked':''}>${esc(step.title)}</label>`).join('')}</div>
-      <button class="text-btn" data-goaledit="${esc(goal.id)}">Изменить этапы</button>
-    </article>`;
-  }).join('')||'<p class="card muted">Добавьте цель, чтобы видеть её этапы здесь.</p>'}</section>`;
-  const byArea = new Map();
-  for (const task of state.tasks) {
-    if (task.mark !== 'Сделано') continue;
-    const area = task.area || 'Личное';
-    byArea.set(area, (byArea.get(area)||0)+1);
+  if(progressModule) content=progressModule.progressHTML(state,day(),esc);
+  else {
+    content='<section class="card" role="status">Загрузка прогресса…</section>';
+    import('./progress.mjs?v=23').then(module=>{
+      progressModule=module;
+      if(page==='Прогресс') render();
+    }).catch(()=>{ if(page==='Прогресс') feedback('Откройте раздел ещё раз при подключении к сети'); });
   }
-  if(byArea.size)content+=`<section class="card area-progress"><h2>Дела по направлениям</h2>${[...byArea].sort((a,b)=>b[1]-a[1]).map(([area,count])=>`<div class="area-stat"><div class="row"><span>${esc(area)}</span><strong>${count}</strong></div></div>`).join('')}</section>`;
-
 }
 
 if(page==='Настройки')content=`<div class="heading"><div><h1>Настройки</h1><p>Установка и резервные копии</p></div></div><div class="settings-grid"><section class="card install-guide"><h2>Установить на iPhone</h2><ol><li>Откройте эту ссылку в Safari.</li><li>Нажмите «Поделиться».</li><li>Выберите «На экран Домой» и «Добавить».</li></ol><p>Первое открытие требует интернета. Данные хранятся в этом браузере на устройстве; очищение данных сайта удалит историю. Регулярно сохраняйте копию.</p><p id="offline-state">Проверка офлайн-доступа…</p></section><section class="card"><h2>Ваши данные</h2><button class="primary" id="export">Скачать резервную копию</button><label>Добавить данные из копии<input id="import" type="file" accept="application/json"></label><p>Импорт добавляет записи из файла и сохраняет текущие. Копию можно сохранить в «Файлы» или iCloud Drive.</p><button class="text-btn" id="protect-history">Защитить данные на устройстве</button><p id="backup-status" class="small muted" role="status"></p></section></div>`;
@@ -121,6 +103,9 @@ if(page==='Помощник'){if(routeModule)content=routeModule.routeHTML(state
 
 $('#app').innerHTML=`<div class="shell"><aside class="sidebar"><a class="brand" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><nav>${pages.map(p=>`<button class="navbtn ${page===p?'active':''}" data-page="${p}">${p==='Сегодня'?'Ежедневник':p==='Помощник'?'Маршруты':p}</button>`).join('')}</nav><div class="side-note">МФТИ · 3-й курс<strong>Исследования<br>и проекты</strong>GaAs · GPE · ML</div></aside><main class="workspace"><header class="topbar"><span class="breadcrumb">APEIRON / ${page==='Сегодня'?'Ежедневник':page==='Помощник'?'Маршруты':page}</span><a class="brand only-mobile" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><div class="top-actions"><span class="small muted">${new Date().toLocaleDateString('ru',{day:'numeric',month:'long'})}</span></div></header>${locked?'<p class="notice warning">Ошибка чтения истории. Восстановите резервную копию в настройках.</p>':''}${content}</main></div><nav class="mobile-nav" aria-label="Разделы">${pages.map((p,i)=>`<button data-page="${p}" ${page===p?'aria-current="page"':''} class="${page===p?'active':''}" aria-label="${['Ежедневник','Цели','Маршруты','Календарь','Прогресс','Настройки'][i]}">${['Дела','Цели','Планы','Даты','Итоги','Ещё'][i]}</button>`).join('')}</nav>`;
 
+document.querySelectorAll('[data-progress-day]').forEach(button=>button.onclick=()=>{
+  resetDiaryView(); date=button.dataset.progressDay; page='Сегодня'; render(); scrollTo(0,0);
+});
 if($('#open-coach'))$('#open-coach').onclick=()=>{page='Помощник';render();scrollTo(0,0)};
 if($('#retry-routes'))$('#retry-routes').onclick=()=>{loadRoutes();render()};
 if(page==='Помощник'&&routeModule)routeModule.bindRoutes({state,track:routeTrack,index:routeIndex,start:routeStart,change:(t,i,d)=>{routeTrack=t;routeIndex=i;routeStart=d;render()},save,feedback,openDiary:d=>{resetDiaryView();date=d;page='Сегодня';render();scrollTo(0,0)},openGoals:()=>{page='Цели';render()}});

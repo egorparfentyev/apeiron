@@ -121,3 +121,26 @@
   content:""; grid-area:1/1; width:5px; height:9px; border:solid #123c32;
   border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg);
 }
+
+.weekly { margin-bottom: 18px; }
+.week-chart { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px; margin-top:14px; }
+.week-chart button { display:grid; justify-items:center; gap:7px; padding:6px 0; font-size:12px; color:var(--muted); }
+.week-chart i { display:flex; align-items:flex-end; width:min(70%,32px); height:48px; background:#263035; border-radius:5px; overflow:hidden; }
+.week-chart b { width:100%; background:var(--accent); }
+.week-chart small { font-variant-numeric:tabular-nums; color:var(--ink); }
+@media(max-width:720px) {
+  .day-line { align-items:center; gap:4px; }
+  .day-line blockquote { font-size:1rem; }
+  .planner-filters { display:flex; flex-wrap:wrap; }
+  .agenda-body { min-width:0; }
+  .agenda-toolbar input, .capture-bar input { font-size:16px; }
+  .weekly { padding-inline:12px; }
+}
+@media(prefers-reduced-motion:no-preference) {
+  button { transition:background-color .14s ease; }
+  .week-day:active,.mobile-nav button:active,.primary:active { transform:scale(.97); }
+  .just-toggled::before,.just-toggled::after { animation:check-pulse .24s ease-out; }
+  dialog[open] { animation:dialog-in .16s ease-out; }
+  @keyframes check-pulse { 45% {scale:1.22} }
+  @keyframes dialog-in { from {opacity:0;translate:0 5px} }
+}
