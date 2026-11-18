@@ -4,12 +4,10 @@ struct TodayView: View {
     @Environment(Store.self) private var store
     @State private var date = Date.now
     @State private var addTask = false
-    @State private var addHabit = false
     @State private var editingTask: DayTask?
     @State private var reflection = ""
     @State private var journalSaved = false
     var tasks: [DayTask] { store.state.tasks.filter { $0.day == Day.key(date) } }
-    var habits: [Habit] { store.state.habits.filter { $0.scheduled(date) } }
     var body: some View {
         Screen {
             HStack { Eyebrow(text: "Вектор / ваш следующий шаг"); Spacer(); NavigationLink { SettingsView() } label: { Image(systemName: "slider.horizontal.3").frame(width: 44, height: 44) }.accessibilityLabel("Настройки и резервная копия") }
@@ -49,16 +47,6 @@ struct TodayView: View {
                     }
                 }
             }
-            HStack { Text("Небольшие привычки").font(.title2.bold()); Spacer(); Button { addHabit = true } label: { Image(systemName: "plus").frame(width: 44, height: 44) }.accessibilityLabel("Добавить привычку") }
-            if habits.isEmpty { Text("На этот день привычек нет. Можно отдохнуть или добавить свою.").foregroundStyle(.secondary) }
-            ForEach(habits) { habit in
-                Card {
-                    HStack(alignment: .top) {
-                        MarkPicker(mark: store.habitMark(habit.id, day: date), allowRest: true) { store.markHabit(habit.id, day: date, mark: $0) }.disabled(Day.key(date) > Day.key(.now))
-                        VStack(alignment: .leading, spacing: 6) { Text(habit.title).font(.headline); Text(habit.minimum).font(.subheadline); Text(habit.cue).font(.caption).foregroundStyle(.secondary) }
-                    }
-                }
-            }
             Card {
                 VStack(alignment: .leading, spacing: 12) {
                     Label("Вечерняя заметка", systemImage: "pencil.and.outline").font(.headline)
@@ -77,7 +65,6 @@ struct TodayView: View {
         .onChange(of: reflection) { _, _ in journalSaved = false }
         .sheet(isPresented: $addTask) { TaskEditor(day: date) }
         .sheet(item: $editingTask) { TaskEditor(day: date, existing: $0) }
-        .sheet(isPresented: $addHabit) { HabitEditor() }
     }
 }
 
@@ -131,27 +118,3 @@ struct TaskEditor: View {
     }
 }
 
-struct HabitEditor: View {
-    @Environment(Store.self) private var store
-    @Environment(\.dismiss) private var dismiss
-    @State private var title = ""
-    @State private var minimum = ""
-    @State private var cue = ""
-    @State private var area = Area.english
-    @State private var weekdays: Set<Int> = [2,3,4,5,6]
-    private let days = [(2,"Понедельник"),(3,"Вторник"),(4,"Среда"),(5,"Четверг"),(6,"Пятница"),(7,"Суббота"),(1,"Воскресенье")]
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Начните с малого") { TextField("Название", text: $title); TextField("Минимальный шаг на 2 минуты", text: $minimum); TextField("После какого действия?", text: $cue); Picker("Направление", selection: $area) { ForEach(Area.allCases) { Text($0.rawValue).tag($0) } } }
-                Section("Дни недели") { ForEach(days, id: \.0) { day in Toggle(day.1, isOn: Binding(get: { weekdays.contains(day.0) }, set: { if $0 { weekdays.insert(day.0) } else { weekdays.remove(day.0) } })) } }
-            }.navigationTitle("Новая привычка").toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Отмена") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button("Добавить") {
-                    let h = Habit(title: title, minimum: minimum, cue: cue, area: area, weekdays: weekdays.sorted(), startDay: Day.key(.now))
-                    store.change { $0.habits.append(h) }; if store.error == nil { dismiss() }
-                }.disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || minimum.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || weekdays.isEmpty) }
-            }
-        }
-    }
-}

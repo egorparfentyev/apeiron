@@ -23,8 +23,6 @@ struct ProgressScreen: View {
                     }.frame(height: 150).chartYAxis { AxisMarks(values: .automatic(desiredCount: 3)) }.accessibilityLabel("Дела по дням за выбранный период")
                 }
             }
-            let rate = Analyzer.habitRate(store.state, from: start, through: .now)
-            Card { VStack(alignment: .leading, spacing: 12) { Text("Ритм привычек").font(.headline); Text(rate.planned == 0 ? "Пока нет запланированных повторений" : "\(rate.done) из \(rate.planned) повторений выполнено").font(.title3); ProgressView(value: rate.planned == 0 ? 0 : Double(rate.done) / Double(rate.planned)); Text("Только назначенные дни с момента создания. Отдых исключён из расчёта. Сегодняшние привычки включены; процент может вырасти к вечеру.").font(.caption).foregroundStyle(.secondary) } }
             Text("Куда направлена энергия").font(.title2.bold())
             ForEach(Area.allCases) { area in
                 let count = Analyzer.completed(store.state, area: area, from: start, through: .now)
@@ -72,7 +70,7 @@ struct GuideView: View {
                 }
             }
             Text("Краткий синтез опубликованных материалов авторов и издателей. Это не замена полным книгам и не обещание гарантированного успеха.").font(.caption).foregroundStyle(.secondary)
-            NavigationLink("Настройки, привычки и резервная копия") { SettingsView() }
+            NavigationLink("Настройки и резервная копия") { SettingsView() }
         }.navigationTitle("Опора").navigationBarTitleDisplayMode(.inline)
     }
 }

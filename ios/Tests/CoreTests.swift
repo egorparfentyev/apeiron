@@ -24,7 +24,7 @@ import Foundation
         state.tasks[0].mark = .done
         check(Analyzer.completed(state, area: .data, from: now, through: now) == 1, "Explicit done counts once")
         check(Analyzer.completed(state, area: .data, from: Day.shifted(now, by: 1), through: Day.shifted(now, by: 2)) == 0, "Date range excludes older completions")
-        var h = state.habits[0]; h.weekdays = [1,2,3,4,5,6,7]
+        let h = Habit(title: "Legacy", minimum: "", cue: "", area: .english, weekdays: [1,2,3,4,5,6,7], startDay: Day.key(now))
         state.habits = [h]
         check(Analyzer.habitRate(state, from: Day.shifted(now, by: -30), through: now).planned == 1, "No denominator before habit creation")
         state.logs = [HabitLog(habitID: h.id, day: Day.key(now), mark: .rest)]

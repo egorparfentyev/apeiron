@@ -26,10 +26,9 @@ export function progressHTML(state,today,esc) {
   const tracked = state.goals.filter(goal=>state.progressGoalIDs?.includes(goal.id));
   let content=`<div class="heading"><h1>Прогресс</h1><button id="track-goal" class="primary">＋ Цель</button></div>
   ${weekHTML(state.tasks,today)}
-  <div class="stats">
+  <div class="stats task-stats">
   <div class="card stat"><span class="eyebrow">Дела</span><strong>${state.tasks.filter(task=>task.mark==='Сделано').length}</strong><p>выполнено</p></div>
   <div class="card stat"><span class="eyebrow">Этапы</span><strong>${state.goals.flatMap(goal=>goal.milestones).filter(step=>step.done).length}</strong><p>достигнуто</p></div>
-  <div class="card stat"><span class="eyebrow">Привычки</span><strong>${state.logs.filter(log=>log.mark==='Сделано').length}</strong><p>повторений</p></div>
   </div>
   <section class="progress-goals" aria-label="Отслеживаемые цели">${tracked.map(goal=>{
     const completed = goal.milestones.filter(step=>step.done).length;

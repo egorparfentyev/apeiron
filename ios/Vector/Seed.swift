@@ -18,14 +18,7 @@ enum Seed {
             goal("Исследователь на стыке Physics × AI", .physics, .future, 60, "Выбрать сильную область и оставить пространство для изменений", ["Сформулировать исследовательскую тему", "Получить опыт в нескольких командах", "Завершить подходящую программу обучения", "Создать полезный научный или инженерный результат"]),
             goal("Технологический стартап и свобода", .startup, .future, 120, "Превратить научную компетенцию в востребованный продукт", ["Найти повторяющуюся проблему отрасли", "Собрать дополняющую команду", "Проверить спрос платным пилотом", "Пересмотреть долгосрочный план по фактам"])
         ]
-        let day = Day.key(now)
-        let habits = [
-            Habit(title: "Говорить по-английски", minimum: "2 минуты: рассказать, как прошёл день", cue: "После вечернего чая", area: .english, weekdays: [2,3,4,5,6], startDay: day),
-            Habit(title: "Один шаг в исследовании", minimum: "Прочитать абзац и записать вопрос", cue: "После первой свободной пары", area: .physics, weekdays: [2,4,6], startDay: day),
-            Habit(title: "Практика Python / ML", minimum: "Открыть ноутбук и выполнить один пример", cue: "После обеда в свободный день", area: .data, weekdays: [3,5,7], startDay: day),
-            Habit(title: "Поддерживать знакомство", minimum: "Один искренний вопрос коллеге о его работе", cue: "После семинара или в конце недели", area: .people, weekdays: [6], startDay: day)
-        ]
-        return AppState(goals: goals, tasks: [], habits: habits, events: events)
+        return AppState(goals: goals, tasks: [], habits: [], events: events)
     }
     static let events: [Opportunity] = [
         Opportunity(title: "Горизонты нанофотоники — 2026", kind: "Конференция · МФТИ", date: Day.date("2026-12-22T09:00:00+03:00"), end: Day.date("2026-12-24T18:00:00+03:00"), timing: "22–24 декабря 2026 · Долгопрудный. Даты подтверждены; время 09:00–18:00 ориентировочное, уточните программу.", eligibility: "Мероприятие по фотонике в МФТИ. Условия регистрации и участия студента уточнить у организатора.", nextStep: "Посмотреть программу, выбрать 2 доклада и подготовить один вопрос.", url: "https://nanophotonics-conf.mipt.ru/", verified: "28.10.2026"),
@@ -39,8 +32,6 @@ enum Seed {
 struct Reading: Identifiable {
     var title: String; var author: String; var idea: String; var practice: String; var url: String; var id: String { title }
     static let all: [Reading] = [
-        Reading(title: "Atomic Habits", author: "Джеймс Клир", idea: "Уменьшайте входное действие и связывайте его с уже существующей привычкой.", practice: "После чая — 2 минуты английского вслух. Большая сессия необязательна.", url: "https://jamesclear.com/habit-stacking"),
-        Reading(title: "Tiny Habits", author: "Би Джей Фогг", idea: "Начинайте с небольшого действия, которое помещается в обычный день.", practice: "Открыть статью и записать один вопрос. Отметить, что удалось начать.", url: "https://www.bjfogg.com/tiny-habits"),
         Reading(title: "Rethinking Positive Thinking / WOOP", author: "Габриэле Эттинген", idea: "Желание → результат → внутреннее препятствие → конкретный план «если — то».", practice: "Если после пар нет сил, разберу один рисунок из статьи вместо целой главы.", url: "https://woopmylife.org/en/practice"),
         Reading(title: "Deep Work", author: "Кэл Ньюпорт", idea: "Выделяйте защищённое время для сложной работы.", practice: "Два свободных окна в неделю по 25 минут: одна задача по ML, уведомления выключены.", url: "https://www.hachettebookgroup.com/titles/cal-newport/deep-work/9781455586677/"),
         Reading(title: "Как завоёвывать друзей и оказывать влияние на людей", author: "Дейл Карнеги", idea: "Интересуйтесь человеком, слушайте и задавайте содержательные вопросы.", practice: "После семинара спросить о работе собеседника; позже поделиться полезной ссылкой без ожидания услуги.", url: "https://www.dalecarnegie.com/en/dalecarnegieprinciples")
