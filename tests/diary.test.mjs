@@ -20,3 +20,15 @@ console.log('Planner: filters, remaining duration, checklist preservation passed
 assert.deepEqual(new Set(selectTasks(tasks,'2026-11-14','history').map(t=>t.id)),new Set(['1','2','3','4']));
 assert.deepEqual(selectTasks(tasks,'2026-11-14','history','A').map(t=>t.id),['1']);
 assert.ok(diaryHTML({tasks:[],dayLines:{'2026-11-08':'<img src=x>'}},'2026-11-08').includes('«&lt;img src=x&gt;»'));
+const plan = [
+  {id:'first', title:'Разбор задачи', time:'09:00', priority:'high', day:'2026-11-08'},
+  {id:'second', title:'Семинар', time:'11:00', day:'2026-11-08'}
+];
+for (const mark of ['В плане','Сделано','В плане']) {
+  plan[0].mark = mark;
+  const agenda = diaryHTML({tasks:plan},plan[0].day).split('id="agenda-list">')[1];
+  assert.deepEqual([...agenda.matchAll(/data-diarycheck="([^"]+)"/g)].map(m=>m[1]), ['first','second']);
+  assert(!agenda.includes('completed-list'));
+  assert(agenda.match(/data-diarycheck="first"[^>]+/)[0].includes('aria-pressed="'+(mark==='Сделано')+'"'));
+  assert.equal(selectTasks(plan,plan[0].day,'important').length,1);
+}
