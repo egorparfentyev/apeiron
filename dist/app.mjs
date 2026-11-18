@@ -1,8 +1,8 @@
 import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=18';
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
-import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=14';
+import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=20';
 let routeModule=null,routeLoading=false,routeError=false;
-function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=19').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
+function loadRoutes(){if(routeLoading||routeModule)return;routeLoading=true;routeError=false;import('./routes.mjs?v=20').then(m=>{routeModule=m;routeLoading=false;if(page==='Помощник')render()}).catch(()=>{routeLoading=false;routeError=true;if(page==='Помощник')render()})}
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), day=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let state, primary, locked = false;
 try {
