@@ -17,7 +17,8 @@ struct SettingsView: View {
     @State private var incoming: Data?
     @State private var confirmImport = false
     @State private var notificationStatus = ""
-    @State private var reminderTime = Calendar.current.date(from: DateComponents(hour: 21, minute: 0))!
+    @AppStorage("apeiron.morning") private var morning = false
+    @AppStorage("apeiron.evening") private var evening = false
     var body: some View {
         Form {
             Section("Вектор · iOS 26+") {
@@ -25,10 +26,9 @@ struct SettingsView: View {
                 Text("Данные хранятся на устройстве. Нет аккаунта, сервера, облачной синхронизации или фонового наблюдения. Анализ слов работает локально.").font(.caption).foregroundStyle(.secondary)
                 if store.locked { Label("Хранилище заблокировано до восстановления", systemImage: "lock.trianglebadge.exclamationmark").foregroundStyle(.orange) }
             }
-            Section("Напоминание о маленьком шаге") {
-                DatePicker("Время", selection: $reminderTime, displayedComponents: .hourAndMinute)
-                Button("Включить ежедневное напоминание") { Task { await setReminder() } }
-                Button("Отключить напоминание") { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["vector.daily"]); notificationStatus = "Напоминание отключено" }
+            Section("Уведомления") {
+                reminder("09:00 · Новая привычка", enabled: $morning)
+                reminder("21:00 · Незавершённые дела дня", enabled: $evening)
                 if !notificationStatus.isEmpty { Text(notificationStatus).font(.caption) }
             }
             Section("Резервная копия") {
@@ -58,15 +58,20 @@ struct SettingsView: View {
                 Button("Отмена", role: .cancel) { incoming = nil }
             }
     }
-    @MainActor private func setReminder() async {
-        do {
-            let center = UNUserNotificationCenter.current()
-            guard try await center.requestAuthorization(options: [.alert, .sound]) else { notificationStatus = "Уведомления не разрешены. Доступ можно изменить в настройках iPhone."; return }
-            let content = UNMutableNotificationContent(); content.title = "Один маленький шаг"; content.body = "Как прошёл день? Отметьте сделанное и выберите посильный шаг на завтра."; content.sound = .default
-            let components = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-            try await center.add(UNNotificationRequest(identifier: "vector.daily", content: content, trigger: trigger))
-            notificationStatus = "Напоминание включено на \(reminderTime.formatted(date: .omitted, time: .shortened))"
-        } catch { notificationStatus = "Не удалось включить: \(error.localizedDescription)" }
+    private func reminder(_ label: String, enabled: Binding<Bool>) -> some View {
+        Toggle(label, isOn: Binding(get: { enabled.wrappedValue }, set: { value in
+            Task { @MainActor in
+                do {
+                    if value {
+                        guard try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) else {
+                            notificationStatus = "Разрешите уведомления в настройках iPhone."; return
+                        }
+                    }
+                    enabled.wrappedValue = value
+                    notificationStatus = ""
+                    store.refreshReminders()
+                } catch { notificationStatus = error.localizedDescription }
+            }
+        }))
     }
 }

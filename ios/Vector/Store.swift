@@ -1,5 +1,8 @@
 import Foundation
 import Observation
+#if os(iOS)
+import UserNotifications
+#endif
 
 @MainActor @Observable final class Store {
     private(set) var state: AppState
@@ -24,7 +27,7 @@ import Observation
     func change(_ edit: (inout AppState) -> Void) {
         guard !locked else { error = "Хранилище заблокировано. Восстановите резервную копию в настройках."; return }
         var next = state; edit(&next)
-        do { try Self.write(next, to: file); state = next }
+        do { try Self.write(next, to: file); state = next; refreshReminders() }
         catch { self.error = "Изменение не сохранено: \(error.localizedDescription)" }
     }
     func restore(_ data: Data) {
@@ -34,8 +37,50 @@ import Observation
                 let backup = file.deletingLastPathComponent().appending(path: "before-import-\(UUID().uuidString).json")
                 try FileManager.default.copyItem(at: file, to: backup)
             }
-            try Self.write(next, to: file); state = next; locked = false
+            try Self.write(next, to: file); state = next; locked = false; refreshReminders()
         } catch { self.error = "Копия не восстановлена: \(error.localizedDescription). Текущие данные сохранены." }
+    }
+    #if os(iOS)
+    private var reminderUpdate: Task<Void, Never>?
+    #endif
+    func refreshReminders() {
+        #if os(iOS)
+        guard !locked else { return }
+        let previous = reminderUpdate
+        previous?.cancel()
+        reminderUpdate = Task {
+            await previous?.value
+            guard !Task.isCancelled else { return }
+            let center = UNUserNotificationCenter.current()
+            let prefix = "apeiron.reminder."
+            let pending = await center.pendingNotificationRequests()
+            guard !Task.isCancelled else { return }
+            let obsolete = pending.map(\.identifier).filter { $0.hasPrefix(prefix) || $0 == "vector.daily" }
+            center.removePendingNotificationRequests(withIdentifiers: obsolete)
+            func add(_ id: String, _ body: String, _ components: DateComponents, repeats: Bool) async throws {
+                let content = UNMutableNotificationContent()
+                content.title = "Апейрон"; content.body = body; content.sound = .default
+                try await center.add(UNNotificationRequest(identifier: prefix + id, content: content,
+                    trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: repeats)))
+            }
+            do {
+                if UserDefaults.standard.bool(forKey: "apeiron.morning") {
+                    try await add("morning", "Какую привычку попробуете сегодня? Запишите первое действие в план дня.", DateComponents(hour: 9, minute: 0), repeats: true)
+                }
+                guard UserDefaults.standard.bool(forKey: "apeiron.evening"), !Task.isCancelled else { return }
+                let now = Date(), calendar = Calendar.current
+                let planned = Dictionary(grouping: state.tasks.filter { $0.mark != .done && $0.day >= Day.key(now) }, by: \.day)
+                for key in planned.keys.sorted().prefix(60) {
+                    guard !Task.isCancelled else { return }
+                    let parts = key.split(separator: "-").compactMap { Int($0) }
+                    guard parts.count == 3 else { continue }
+                    let time = DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: 21, minute: 0)
+                    guard let fire = calendar.date(from: time), fire > now else { continue }
+                    try await add(key, "Незавершённых дел в плане дня: " + String(planned[key]?.count ?? 0) + ". Откройте ежедневник, чтобы закончить их.", time, repeats: false)
+                }
+            } catch { if !Task.isCancelled { self.error = error.localizedDescription } }
+        }
+        #endif
     }
     func markTask(_ id: UUID, _ mark: Mark) {
         guard let task = state.tasks.first(where: { $0.id == id }), task.day <= Day.key(.now) else { error = "Будущие дела можно планировать; результат отмечается в день выполнения."; return }

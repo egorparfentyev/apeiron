@@ -1,3 +1,4 @@
+import {refreshReminders, reminderSettings} from './reminders.mjs?v=25';
 import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=18';
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
 import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=23';
@@ -97,11 +98,11 @@ if(page==='Прогресс'){
   }
 }
 
-if(page==='Настройки')content=`<div class="heading"><div><h1>Настройки</h1><p>Установка и резервные копии</p></div></div><div class="settings-grid"><section class="card install-guide"><h2>Установить на iPhone</h2><ol><li>Откройте эту ссылку в Safari.</li><li>Нажмите «Поделиться».</li><li>Выберите «На экран Домой» и «Добавить».</li></ol><p>Первое открытие требует интернета. Данные хранятся в этом браузере на устройстве; очищение данных сайта удалит историю. Регулярно сохраняйте копию.</p><p id="offline-state">Проверка офлайн-доступа…</p></section><section class="card"><h2>Ваши данные</h2><button class="primary" id="export">Скачать резервную копию</button><label>Добавить данные из копии<input id="import" type="file" accept="application/json"></label><p>Импорт добавляет записи из файла и сохраняет текущие. Копию можно сохранить в «Файлы» или iCloud Drive.</p><button class="text-btn" id="protect-history">Защитить данные на устройстве</button><p id="backup-status" class="small muted" role="status"></p></section></div>`;
+if(page==='Настройки')content=`<div class="heading"><div><h1>Настройки</h1><p>Установка и резервные копии</p></div></div><div class="settings-grid">${reminderSettings}<section class="card install-guide"><h2>Установить на iPhone</h2><ol><li>Откройте эту ссылку в Safari.</li><li>Нажмите «Поделиться».</li><li>Выберите «На экран Домой» и «Добавить».</li></ol><p>Первое открытие требует интернета. Данные хранятся в этом браузере на устройстве; очищение данных сайта удалит историю. Регулярно сохраняйте копию.</p><p id="offline-state">Проверка офлайн-доступа…</p></section><section class="card"><h2>Ваши данные</h2><button class="primary" id="export">Скачать резервную копию</button><label>Добавить данные из копии<input id="import" type="file" accept="application/json"></label><p>Импорт добавляет записи из файла и сохраняет текущие. Копию можно сохранить в «Файлы» или iCloud Drive.</p><button class="text-btn" id="protect-history">Защитить данные на устройстве</button><p id="backup-status" class="small muted" role="status"></p></section></div>`;
 
 if(page==='Помощник'){if(routeModule)content=routeModule.routeHTML(state,routeTrack,routeIndex,routeStart);else{content=routeError?'<section class="card"><h2>Раздел недоступен</h2><p>При первом открытии маршрутов нужен интернет.</p><button id="retry-routes" class="primary">Повторить</button></section>':'<section class="card" role="status">Загрузка маршрутов…</section>';if(!routeError)loadRoutes()}}
 
-$('#app').innerHTML=`<div class="shell"><aside class="sidebar"><a class="brand" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><nav>${pages.map(p=>`<button class="navbtn ${page===p?'active':''}" data-page="${p}">${p==='Сегодня'?'Ежедневник':p==='Помощник'?'Маршруты':p}</button>`).join('')}</nav><div class="side-note">МФТИ · 3-й курс<strong>Исследования<br>и проекты</strong>GaAs · GPE · ML</div></aside><main class="workspace"><header class="topbar"><span class="breadcrumb">APEIRON / ${page==='Сегодня'?'Ежедневник':page==='Помощник'?'Маршруты':page}</span><a class="brand only-mobile" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><div class="top-actions"><span class="small muted">${new Date().toLocaleDateString('ru',{day:'numeric',month:'long'})}</span></div></header>${locked?'<p class="notice warning">Ошибка чтения истории. Восстановите резервную копию в настройках.</p>':''}${content}</main></div><nav class="mobile-nav" aria-label="Разделы">${pages.map((p,i)=>`<button data-page="${p}" ${page===p?'aria-current="page"':''} class="${page===p?'active':''}" aria-label="${['Ежедневник','Цели','Маршруты','Календарь','Прогресс','Настройки'][i]}">${['Дела','Цели','Планы','Даты','Итоги','Ещё'][i]}</button>`).join('')}</nav>`;
+$('#app').innerHTML=`<div class="shell"><aside class="sidebar"><a class="brand" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><nav>${pages.map(p=>`<button class="navbtn ${page===p?'active':''}" data-page="${p}">${p==='Сегодня'?'Ежедневник':p==='Помощник'?'Маршруты':p}</button>`).join('')}</nav><div class="side-note">МФТИ · 3-й курс<strong>Исследования<br>и проекты</strong>GaAs · GPE · ML</div></aside><main class="workspace"><header class="topbar"><span class="breadcrumb">APEIRON / ${page==='Сегодня'?'Ежедневник':page==='Помощник'?'Маршруты':page}</span><a class="brand only-mobile" href="#"><img src="./icon.svg?v=14" alt="">Апейрон</a><div class="top-actions"><span class="small muted">${new Date().toLocaleDateString('ru',{day:'numeric',month:'long'})}</span></div></header>${locked?'<p class="notice warning">Ошибка чтения истории. Восстановите резервную копию в настройках.</p>':''}<div id="reminder-banner" role="status"></div>${content}</main></div><nav class="mobile-nav" aria-label="Разделы">${pages.map((p,i)=>`<button data-page="${p}" ${page===p?'aria-current="page"':''} class="${page===p?'active':''}" aria-label="${['Ежедневник','Цели','Маршруты','Календарь','Прогресс','Настройки'][i]}">${['Дела','Цели','Планы','Даты','Итоги','Ещё'][i]}</button>`).join('')}</nav>`;
 
 document.querySelectorAll('[data-progress-day]').forEach(button=>button.onclick=()=>{
   resetDiaryView(); date=button.dataset.progressDay; page='Сегодня'; render(); scrollTo(0,0);
@@ -181,6 +182,15 @@ if($('#export')){
   };
   navigator.serviceWorker?.ready.then(()=>{if($('#offline-state'))$('#offline-state').textContent='Приложение подготовлено для работы без интернета.'});
 }
+  updateReminder();
 }
+function updateReminder(){
+  if (!document.hidden) refreshReminders(state.tasks,()=>{
+    resetDiaryView(); date=day(); page='Сегодня'; render(); scrollTo(0,0);
+  });
+}
+document.addEventListener('visibilitychange',updateReminder);
+window.addEventListener('pageshow',updateReminder);
+setInterval(updateReminder,30000);
 render();performance.mark('apeiron-ready');
 if('serviceWorker'in navigator){const register=()=>navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});if(document.readyState==='complete')setTimeout(register,0);else window.addEventListener('load',register,{once:true})}

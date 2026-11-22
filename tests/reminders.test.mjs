@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {reminderFor} from '../dist/reminders.mjs';
+const date='2026-11-22', prefs={morning:true,evening:true};
+const tasks=[{day:date,mark:'В плане'},{day:date,mark:'Сделано'},{day:'2026-11-21',mark:'В плане'}];
+const at=(hour,list=tasks,dismissed={})=>reminderFor(new Date(2026,10,22,hour),list,prefs,dismissed);
+assert.equal(at(8),null);
+assert.equal(at(9).kind,'morning');
+assert.match(at(21).text,/дел в плане дня: 1/);
+assert.equal(at(22,[]),null);
+assert.equal(at(22,tasks,{evening:date}),null);
