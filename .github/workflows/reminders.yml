@@ -1,0 +1,22 @@
+name: Kairos reminders
+on:
+  schedule:
+    - cron: '5 6 * * *'
+    - cron: '5 18 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deliver:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --prefix push --ignore-scripts
+      - run: node push/send.mjs "$KIND"
+        env:
+          KAIROS_PUSH: ${{ secrets.KAIROS_PUSH }}
+          KIND: ${{ github.event.schedule == '5 6 * * *' && 'morning' || github.event.schedule == '5 18 * * *' && 'evening' || 'check' }}

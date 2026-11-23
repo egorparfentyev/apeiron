@@ -1,4 +1,4 @@
-import {refreshReminders, reminderSettings} from './reminders.mjs?v=25';
+import {refreshReminders, reminderSettings} from './reminders.mjs?v=27';
 import {historyKey as key, isHistory, newestHistory, mergeHistory, readBackup, writeBackup} from './history.mjs?v=18';
 import {migrateGoals, addQuantumOlympiadPlan, linkQuantumOlympiadGoal} from './migrations.mjs?v=18';
 import {diaryHTML,bindDiary,resetDiaryView} from './diary.mjs?v=23';
@@ -182,6 +182,10 @@ if($('#export')){
   };
   navigator.serviceWorker?.ready.then(()=>{if($('#offline-state'))$('#offline-state').textContent='Приложение подготовлено для работы без интернета.'});
 }
+  const pushButton=document.getElementById('push-enable');
+  if(pushButton) import('./push.mjs?v=27').then(({bindPush})=>{
+    if(pushButton.isConnected){pushButton.disabled=false;bindPush(pushButton,document.getElementById('push-status'));}
+  }).catch(()=>{if(pushButton.isConnected)document.getElementById('push-status').textContent='Для подключения нужен интернет.'});
   updateReminder();
 }
 function updateReminder(){
@@ -194,3 +198,5 @@ window.addEventListener('pageshow',updateReminder);
 setInterval(updateReminder,30000);
 render();performance.mark('apeiron-ready');
 if('serviceWorker'in navigator){const register=()=>navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});if(document.readyState==='complete')setTimeout(register,0);else window.addEventListener('load',register,{once:true})}
+
+navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type==='open-today'){resetDiaryView();date=day();page='Сегодня';render();scrollTo(0,0);}});

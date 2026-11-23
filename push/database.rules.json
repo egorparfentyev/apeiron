@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "devices": {
+      ".read": "auth != null && auth.uid === 'B72QqPmuKoeTN42AEiQ5kAG1aBB2'",
+      "$uid": {
+        ".write": "auth != null && (auth.uid === $uid || (auth != null && auth.uid === 'B72QqPmuKoeTN42AEiQ5kAG1aBB2' && !newData.exists()))",
+        ".validate": "newData.hasChildren(['endpoint','keys'])",
+        "endpoint": {
+          ".validate": "newData.isString() && newData.val().length < 1500 && newData.val().matches(/^https:\\/\\/(web\\.push\\.apple\\.com|fcm\\.googleapis\\.com|updates\\.push\\.services\\.mozilla\\.com)\\/[^?#]+$/)"
+        },
+        "keys": {
+          ".validate": "newData.hasChildren(['auth','p256dh'])",
+          "auth": {
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{22}$/)"
+          },
+          "p256dh": {
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{87}$/)"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

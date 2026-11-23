@@ -27,7 +27,7 @@ struct SettingsView: View {
                 if store.locked { Label("Хранилище заблокировано до восстановления", systemImage: "lock.trianglebadge.exclamationmark").foregroundStyle(.orange) }
             }
             Section("Уведомления") {
-                reminder("09:00 · Новая привычка", enabled: $morning)
+                reminder("09:00 · Составить план дня", enabled: $morning)
                 reminder("21:00 · Незавершённые дела дня", enabled: $evening)
                 if !notificationStatus.isEmpty { Text(notificationStatus).font(.caption) }
             }

@@ -65,7 +65,7 @@ import UserNotifications
             }
             do {
                 if UserDefaults.standard.bool(forKey: "apeiron.morning") {
-                    try await add("morning", "Какую привычку попробуете сегодня? Запишите первое действие в план дня.", DateComponents(hour: 9, minute: 0), repeats: true)
+                    try await add("morning", "Запишите дела на сегодня в план дня.", DateComponents(hour: 9, minute: 0), repeats: true)
                 }
                 guard UserDefaults.standard.bool(forKey: "apeiron.evening"), !Task.isCancelled else { return }
                 let now = Date(), calendar = Calendar.current

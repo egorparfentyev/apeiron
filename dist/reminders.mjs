@@ -6,12 +6,12 @@ export function reminderFor(now, tasks, preferences, dismissed) {
   const hour = now.getHours(), date = dateKey(now);
   const kind = hour >= 21 ? 'evening' : hour >= 9 ? 'morning' : null;
   if (!kind || !preferences[kind] || dismissed[kind] === date) return null;
-  if (kind === 'morning') return {kind, date, text:'Какую привычку попробуете сегодня? Запишите первое действие в план дня.'};
+  if (kind === 'morning') return {kind, date, text:'Какие дела хотите выполнить сегодня? Запишите их в план дня.'};
   const count = tasks.filter(task => task.day === date && task.mark !== 'Сделано').length;
   return count ? {kind, date, text:'Незавершённых дел в плане дня: ' + count + '. Откройте список, чтобы закончить их.'} : null;
 }
 
-export const reminderSettings = '<section class="card"><h2>Напоминания</h2><p class="small muted">Появляются при открытом ежедневнике или при возвращении в приложение.</p><label class="step"><input type="checkbox" data-reminder="morning">09:00 · Новая привычка</label><label class="step"><input type="checkbox" data-reminder="evening">21:00 · Незавершённые дела дня</label></section>';
+export const reminderSettings = '<section class="card"><h2>Уведомления на телефон</h2><p class="small muted">09:05 · Записать дела. 21:05 · Проверить итоги. По Москве.</p><button type="button" id="push-enable" class="primary" disabled>Включить уведомления</button><p id="push-status" role="status" class="small muted"></p><h3>Внутри ежедневника</h3><p class="small muted">Появляются при открытом ежедневнике или при возвращении в приложение.</p><label class="step"><input type="checkbox" data-reminder="morning">09:00 · Составить план дня</label><label class="step"><input type="checkbox" data-reminder="evening">21:00 · Незавершённые дела дня</label></section>';
 
 export function refreshReminders(tasks, openDay) {
   const preferences = {}, dismissed = {};

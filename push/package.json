@@ -1,0 +1,1 @@
+{"name":"kairos-notification-sender","private":true,"type":"module","dependencies":{"web-push":"4.0.0"}}
