@@ -21,7 +21,7 @@ struct SettingsView: View {
     @AppStorage("apeiron.evening") private var evening = false
     var body: some View {
         Form {
-            Section("Вектор · iOS 26+") {
+            Section("Кайрос · iOS 26+") {
                 Text("Личные цели и дела в одном месте.")
                 Text("Данные хранятся на устройстве. Нет аккаунта, сервера, облачной синхронизации или фонового наблюдения. Анализ слов работает локально.").font(.caption).foregroundStyle(.secondary)
                 if store.locked { Label("Хранилище заблокировано до восстановления", systemImage: "lock.trianglebadge.exclamationmark").foregroundStyle(.orange) }
@@ -44,7 +44,7 @@ struct SettingsView: View {
             }
             Section("Каталог возможностей") { Text("Проверка: 28.10.2026. Обновляйте сведения по официальным ссылкам. Автоматическое получение новых событий в эту версию не входит.") }
         }.navigationTitle("Настройки")
-            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Vector-\(Day.key(.now))") { result in if case .failure(let error) = result { store.error = error.localizedDescription } }
+            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Kairos-\(Day.key(.now))") { result in if case .failure(let error) = result { store.error = error.localizedDescription } }
             .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
                 do {
                     let url = try result.get(); let access = url.startAccessingSecurityScopedResource(); defer { if access { url.stopAccessingSecurityScopedResource() } }

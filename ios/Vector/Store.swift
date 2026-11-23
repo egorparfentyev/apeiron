@@ -59,7 +59,7 @@ import UserNotifications
             center.removePendingNotificationRequests(withIdentifiers: obsolete)
             func add(_ id: String, _ body: String, _ components: DateComponents, repeats: Bool) async throws {
                 let content = UNMutableNotificationContent()
-                content.title = "Апейрон"; content.body = body; content.sound = .default
+                content.title = "Кайрос"; content.body = body; content.sound = .default
                 try await center.add(UNNotificationRequest(identifier: prefix + id, content: content,
                     trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: repeats)))
             }

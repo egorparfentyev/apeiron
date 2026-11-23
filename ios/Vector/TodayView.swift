@@ -10,7 +10,7 @@ struct TodayView: View {
     var tasks: [DayTask] { store.state.tasks.filter { $0.day == Day.key(date) } }
     var body: some View {
         Screen {
-            HStack { Eyebrow(text: "Вектор / ваш следующий шаг"); Spacer(); NavigationLink { SettingsView() } label: { Image(systemName: "slider.horizontal.3").frame(width: 44, height: 44) }.accessibilityLabel("Настройки и резервная копия") }
+            HStack { Eyebrow(text: "Кайрос / ваш следующий шаг"); Spacer(); NavigationLink { SettingsView() } label: { Image(systemName: "slider.horizontal.3").frame(width: 44, height: 44) }.accessibilityLabel("Настройки и резервная копия") }
             Text("Маленькие шаги.\nБольшая траектория.").font(.largeTitle.bold()).tracking(-1)
             DatePicker("День", selection: $date, displayedComponents: .date)
             Card {
